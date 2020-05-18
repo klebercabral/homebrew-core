@@ -157,3 +157,65 @@ jobs:
         run: |
           find .
           rm -rf *
+  linux:
+    needs: tap_syntax
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    container:
+      image: homebrew/brew
+    continue-on-error: true
+    env:
+      HOMEBREW_GIT_NAME: BrewTestBot
+      HOMEBREW_GIT_EMAIL: 'homebrew-test-bot@lists.sfconservancy.org'
+      HOMEBREW_DEVELOPER: 1
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    steps:
+      - name: Update Homebrew
+        run: brew update-reset
+
+      - name: Set up Git repository
+        run: |
+          cd $(brew --repo ${{github.repository}})
+          git clean -ffdx
+          git fetch --prune --force origin master
+          git fetch --prune --force origin ${{github.sha}}
+          git checkout --force ${{github.sha}}
+          git log -1
+
+      - name: Run brew test-bot --only-setup
+        run: brew test-bot --only-setup
+
+      - name: Run brew test-bot --only-formulae
+        run: |
+          mkdir ~/bottles
+          cd ~/bottles
+          brew test-bot --only-formulae
+
+      - name: Output brew test-bot --only-formulae failures
+        if: always()
+        run: |
+          cat ~/bottles/steps_output.txt
+          rm ~/bottles/steps_output.txt
+
+      - name: Count bottles
+        id: bottles
+        if: always()
+        run: |
+          cd ~/bottles
+          count=$(ls *.json | wc -l | xargs echo -n)
+          echo "$count bottles"
+          echo "::set-output name=count::$count"
+
+      - name: Move bottles
+        if: always() && steps.bottles.outputs.count > 0
+        run: |
+          mv ~/bottles $PWD
+
+      - name: Upload bottles
+        if: always() && steps.bottles.outputs.count > 0
+        uses: actions/upload-artifact@v1
+        with:
+          name: bottles
+          path: bottles
