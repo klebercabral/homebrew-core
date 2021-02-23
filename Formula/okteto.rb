@@ -26,6 +26,7 @@ class Okteto < Formula
     system "echo | okteto init --overwrite --file test.yml"
     expected = <<~EOS
       name: #{Pathname.getwd.basename}
+      autocreate: true
       image: okteto/ruby:2
       command: bash
       sync:
