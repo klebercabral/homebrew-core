@@ -25,7 +25,7 @@ class Okteto < Formula
     assert_match "okteto version #{version}", shell_output("#{bin}/okteto version")
 
     touch "test.rb"
-    assert_match "error accessing you kubeconfig file: invalid configuration",
+    assert_match "Failed to load your local Kubeconfig",
       shell_output("echo | #{bin}/okteto init --overwrite --file test.yml 2>&1")
   end
 end
