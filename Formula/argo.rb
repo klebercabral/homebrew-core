@@ -36,6 +36,6 @@ class Argo < Formula
     # Since it is an empty file we expect it to be invalid
     touch testpath/"kubeconfig"
     assert_match "invalid configuration",
-      shell_output("#{bin}/argo lint --kubeconfig ./kubeconfig 2>&1", 1)
+      shell_output("#{bin}/argo lint --kubeconfig ./kubeconfig ./kubeconfig 2>&1", 1)
   end
 end
