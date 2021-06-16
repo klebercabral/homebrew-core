@@ -17,10 +17,9 @@ class Etcd < Formula
   depends_on "go" => :build
 
   def install
-    system "go", "mod", "vendor"
-    system "go", "build", *std_go_args(ldflags: "-s -w -X main.version=#{version}"),
+    system "go", "build", "-mod=readonly", *std_go_args(ldflags: "-s -w -X main.version=#{version}"),
            "-o", bin/"etcd"
-    system "go", "build", *std_go_args(ldflags: "-s -w -X main.version=#{version}"),
+    system "go", "build", "-mod=readonly", *std_go_args(ldflags: "-s -w -X main.version=#{version}"),
            "-o", bin/"etcdctl", "etcdctl/main.go"
   end
 
