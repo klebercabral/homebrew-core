@@ -2,8 +2,8 @@ class Etcd < Formula
   desc "Key value store for shared configuration and service discovery"
   homepage "https://github.com/etcd-io/etcd"
   url "https://github.com/etcd-io/etcd.git",
-      tag:      "v3.4.16",
-      revision: "d19fbe541bf9c81e2d69d71d1068bd40c04de200"
+      tag:      "v3.5.0",
+      revision: "946a5a6f25c3b6b89408ab447852731bde6e6289"
   license "Apache-2.0"
   head "https://github.com/etcd-io/etcd.git"
 
