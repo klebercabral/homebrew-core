@@ -17,8 +17,8 @@ class Etcd < Formula
   depends_on "go" => :build
 
   def install
-    ENV["BINDIR"] = bin
     system "make", "build"
+    bin.install Dir[buildpath/"bin/*"]
   end
 
   plist_options manual: "etcd"
