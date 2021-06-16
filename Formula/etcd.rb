@@ -17,14 +17,10 @@ class Etcd < Formula
   depends_on "go" => :build
 
   def install
-    # Fix vendored deps issue (remove this in the next release)
-    system "go", "mod", "vendor"
-
-    system "go", "build", "-mod=vendor", "-ldflags", "-s -w -X main.version=#{version}", "-trimpath", "-o",
-      bin/"etcd"
-    system "go", "build", "-mod=vendor", "-ldflags", "-s -w -X main.version=#{version}", "-trimpath", "-o",
-      bin/"etcdctl", "etcdctl/main.go"
-    prefix.install_metafiles
+    system "go", "build", "-mod=vendor", *std_go_args(ldflags: "-s -w -X main.version=#{version}"),
+           "-o", bin/"etcd"
+    system "go", "build", "-mod=vendor", *std_go_args(ldflags: "-s -w -X main.version=#{version}"),
+           "-o", bin/"etcdctl", "etcdctl/main.go"
   end
 
   plist_options manual: "etcd"
